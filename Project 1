@@ -1,0 +1,93 @@
+import random
+
+# Function to get a list of words from the user
+def get_word_list(prompt):
+    word_list = []
+    print(prompt)
+    while True:
+        word = input("Enter a word (or type 'done' to finish): ")
+        if word.lower() == 'done':
+            break
+        word_list.append(word)
+    return word_list
+
+# Function to generate random usernames
+def generate_username(adjectives, nouns, include_numbers=False, include_special_chars=False):
+    adjective = random.choice(adjectives)
+    noun = random.choice(nouns)
+    
+    username = adjective + noun
+    
+    if include_numbers:
+        username += str(random.randint(1, 999))  # Adds a random number between 1 and 999
+
+    if include_special_chars:
+        special_chars = ['!', '@', '#', '$', '%', '&']
+        username += random.choice(special_chars)  # Adds a random special character
+    
+    return username
+
+# Function to get user preferences for username options
+def get_user_input():
+    # Get user input for numbers
+    while True:
+        include_numbers = input("Would you like to include numbers in your username? (yes/no): ").lower()
+        if include_numbers == 'yes' or include_numbers == 'no':
+            break
+        else:
+            print("Invalid input. Please answer with 'yes' or 'no'.")
+    
+    # Get user input for special characters
+    while True:
+        include_special_chars = input("Would you like to include special characters in your username? (yes/no): ").lower()
+        if include_special_chars == 'yes' or include_special_chars == 'no':
+            break
+        else:
+            print("Invalid input. Please answer with 'yes' or 'no'.")
+    
+    return include_numbers == 'yes', include_special_chars == 'yes'
+
+# Function to save generated usernames to a file
+def save_usernames_to_file(usernames):
+    with open('usernames.txt', 'a') as file:
+        for username in usernames:
+            file.write(username + '\n')
+
+# Main function to run the program
+def main():
+    print("Welcome to the Random Username Generator!")
+    
+    # Get the number of usernames to generate
+    while True:
+        try:
+            num_usernames = int(input("How many usernames would you like to generate? "))
+            if num_usernames <= 0:
+                print("Please enter a positive number.")
+                continue
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    # Get user input for adjectives and nouns
+    adjectives = get_word_list("Please provide a list of adjectives.")
+    nouns = get_word_list("Please provide a list of nouns.")
+    
+    # Get user preferences for numbers and special characters
+    include_numbers, include_special_chars = get_user_input()
+    
+    usernames = []
+    
+    # Generate usernames
+    for _ in range(num_usernames):
+        username = generate_username(adjectives, nouns, include_numbers, include_special_chars)
+        usernames.append(username)
+        print("Generated Username: " + username)
+    
+    # Ask if user wants to save the usernames to a file
+    save_option = input("Would you like to save these usernames to a file? (yes/no): ").lower()
+    if save_option == 'yes':
+        save_usernames_to_file(usernames)
+        print("Usernames have been saved to 'usernames.txt'.")
+    
+if __name__ == "__main__":
+    main()
