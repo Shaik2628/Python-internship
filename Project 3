@@ -1,0 +1,108 @@
+import json
+from datetime import datetime
+
+# Expense class to define each expense record
+class Expense:
+    def __init__(self, amount, description, category, date):
+        self.amount = amount
+        self.description = description
+        self.category = category
+        self.date = date
+
+    def to_dict(self):
+        return {
+            'amount': self.amount,
+            'description': self.description,
+            'category': self.category,
+            'date': self.date
+        }
+
+# Function to add an expense
+def add_expense(expenses):
+    print("\n--- Add New Expense ---")
+    try:
+        amount = float(input("Enter the amount: $"))
+        description = input("Enter a description: ")
+        category = input("Enter the category (e.g., food, transport, entertainment): ")
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Automatically set the current date and time
+        
+        # Create an Expense object and append it to the expenses list
+        new_expense = Expense(amount, description, category, date)
+        expenses.append(new_expense.to_dict())
+        print("\nExpense added successfully!")
+    except ValueError:
+        print("Invalid amount. Please enter a number.")
+
+# Function to view all expenses
+def view_expenses(expenses):
+    if not expenses:
+        print("\nNo expenses recorded yet.")
+    else:
+        print("\n--- View Expenses ---")
+        for i, expense in enumerate(expenses, start=1):
+            print(f"\nExpense {i}:")
+            print(f"Amount: ${expense['amount']}")
+            print(f"Description: {expense['description']}")
+            print(f"Category: {expense['category']}")
+            print(f"Date: {expense['date']}")
+
+# Function to view monthly summary of expenses
+def view_summary(expenses):
+    summary = {}
+    for expense in expenses:
+        month = expense['date'][:7]  # Extract the year and month (YYYY-MM)
+        if month not in summary:
+            summary[month] = 0
+        summary[month] += expense['amount']
+    
+    if not summary:
+        print("\nNo expense summary available.")
+    else:
+        print("\n--- Monthly Expense Summary ---")
+        for month, total in summary.items():
+            print(f"{month}: ${total:.2f}")
+
+# Function to save expenses data to a JSON file
+def save_data(expenses, filename="expenses.json"):
+    with open(filename, "w") as file:
+        json.dump(expenses, file, indent=4)
+    print("\nData saved successfully!")
+
+# Function to load expenses data from a JSON file
+def load_data(filename="expenses.json"):
+    try:
+        with open(filename, "r") as file:
+            expenses = json.load(file)
+        return expenses
+    except FileNotFoundError:
+        print("\nNo previous data found. Starting with a new file.")
+        return []
+
+# Main function to display the menu and handle user input
+def main():
+    expenses = load_data()  # Load existing data, or start fresh if no file found
+    
+    while True:
+        print("\n--- Expense Tracker Menu ---")
+        print("1. Add Expense")
+        print("2. View Expenses")
+        print("3. View Monthly Summary")
+        print("4. Save and Exit")
+        
+        choice = input("Choose an option: ")
+        
+        if choice == "1":
+            add_expense(expenses)
+        elif choice == "2":
+            view_expenses(expenses)
+        elif choice == "3":
+            view_summary(expenses)
+        elif choice == "4":
+            save_data(expenses)
+            print("Exiting the program.")
+            break
+        else:
+            print("\nInvalid option. Please try again.")
+
+if __name__ == "__main__":
+    main()
