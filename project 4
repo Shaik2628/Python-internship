@@ -1,0 +1,45 @@
+import random
+
+# Function to simulate a coin toss
+def toss_coin():
+    return random.choice(["Heads", "Tails"])
+
+# Function to handle the coin toss simulation
+def coin_toss_simulation():
+    print("Welcome to the Virtual Coin Toss Game!")
+    
+    while True:
+        # Ask the user for the number of flips
+        try:
+            num_flips = int(input("How many times would you like to flip the coin? "))
+            if num_flips <= 0:
+                print("Please enter a positive number.")
+                continue
+        except ValueError:
+            print("Invalid input. Please enter an integer.")
+            continue
+        
+        heads_count = 0
+        tails_count = 0
+        
+        # Simulate the tosses and count the results
+        for i in range(num_flips):
+            result = toss_coin()
+            if result == "Heads":
+                heads_count += 1
+            else:
+                tails_count += 1
+        
+        # Display the results
+        print(f"\nResults for {num_flips} tosses:")
+        print(f"Heads: {heads_count} ({(heads_count / num_flips) * 100:.2f}%)")
+        print(f"Tails: {tails_count} ({(tails_count / num_flips) * 100:.2f}%)")
+        
+        # Ask the user if they want to toss again
+        repeat = input("\nDo you want to toss the coin again? (y/n): ").strip().lower()
+        if repeat != 'y':
+            print("Thank you for playing! Goodbye!")
+            break
+
+# Run the coin toss simulation
+coin_toss_simulation()
